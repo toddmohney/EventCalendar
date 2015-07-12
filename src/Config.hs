@@ -14,13 +14,13 @@ module Config where
 
   mergePairs :: Char -> [ConfigPair] -> [IO String]
   mergePairs sep [] = []
-  mergePairs sep (x:xs) = (mergePair sep x):(mergePairs sep xs)
+  mergePairs sep xs = map (mergePair sep) xs
 
   mergePair :: Char -> ConfigPair -> IO String
-  mergePair sep pair = (((fst pair) ++ [sep]) ++) <$> (snd pair)
+  mergePair sep pair = ((fst pair ++ [sep]) ++) <$> snd pair
 
   getPostgresConnectionString :: IO String
   getPostgresConnectionString = foldr1 concatWithSpaceSeparator $ mergePairs '=' postgresConfig
     where 
       concatWithSpaceSeparator :: Applicative f => f String -> f String -> f String
-      concatWithSpaceSeparator list = (\x acc -> (++) <$> (++ " ") <$> x <*> acc) list
+      concatWithSpaceSeparator x acc = (++) <$> (++ " ") <$> x <*> acc

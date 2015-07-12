@@ -34,12 +34,10 @@ BlogPost
 
 main = do
   runStderrLoggingT $ withPostgresqlPool connStr connPoolSize $ \pool -> liftIO $ do
-    flip runSqlPersistMPool pool $ do
-        runMigration migrateAll
+    flip runSqlPersistMPool pool $ runMigration migrateAll
 
   S.scotty 3000 $ do
-    S.get "/" $ do
-      html "Hello World!"
+    S.get "/" $ html "Hello World!"
 
 
 

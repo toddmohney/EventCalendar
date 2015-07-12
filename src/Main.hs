@@ -15,9 +15,11 @@ import           Database.Persist
 import           Database.Persist.Postgresql
 import           Database.Persist.TH
 
+import Data.ByteString.Char8 (pack)
 import Web.Scotty as S
 
-connStr = "host=localhost dbname=event_calendar user=toddmohney port=5432"
+import Config
+
 connPoolSize = 10
 
 share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
@@ -33,7 +35,8 @@ BlogPost
 
 
 main = do
-  runStderrLoggingT $ withPostgresqlPool connStr connPoolSize $ \pool -> liftIO $ do
+  connStr <- postgresConnectionString
+  runStderrLoggingT $ withPostgresqlPool (pack connStr) connPoolSize $ \pool -> liftIO $ do
     flip runSqlPersistMPool pool $ runMigration migrateAll
 
   S.scotty 3000 $ do

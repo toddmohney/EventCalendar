@@ -1,8 +1,15 @@
-module Config where
+module Config (postgresConnectionString) where
+
   import Control.Applicative
   import System.Environment (getEnv)
 
   type ConfigPair = (String, IO String)
+
+  postgresConnectionString :: IO String
+  postgresConnectionString = foldr1 concatWithSpaceSeparator $ mergePairs '=' postgresConfig
+    where 
+      concatWithSpaceSeparator :: Applicative f => f String -> f String -> f String
+      concatWithSpaceSeparator x acc = (++) <$> (++ " ") <$> x <*> acc
 
   postgresConfig :: [ConfigPair]
   postgresConfig = [ 
@@ -18,9 +25,3 @@ module Config where
 
   mergePair :: Char -> ConfigPair -> IO String
   mergePair sep pair = ((fst pair ++ [sep]) ++) <$> snd pair
-
-  getPostgresConnectionString :: IO String
-  getPostgresConnectionString = foldr1 concatWithSpaceSeparator $ mergePairs '=' postgresConfig
-    where 
-      concatWithSpaceSeparator :: Applicative f => f String -> f String -> f String
-      concatWithSpaceSeparator x acc = (++) <$> (++ " ") <$> x <*> acc

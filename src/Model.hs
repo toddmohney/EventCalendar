@@ -14,11 +14,18 @@ module Model where
   import Data.Time
 
   share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
-  Application
-    name String
-    accessKey String
-    secretAccessKey String
-    createdAt UTCTime default=now()
-    updatedAt UTCTime default=now()
-    deriving Show
+    Event
+      ownerId Int
+      name String
+      description String Maybe default=''
+      location String default=''
+      startDate UTCTime
+      endDate UTCTime
+      timeZone String
+      private Bool
+      cancelled Bool default=false
+      updateCount Int default=0
+      generatesNotifications Bool default=true
+      createdAt UTCTime default=now()
+      updatedAt UTCTime default=now()
   |]

@@ -14,8 +14,14 @@ module Model where
   import Data.Time
 
   share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
+    Application
+      name String
+      createdAt UTCTime default=now()
+      updatedAt UTCTime default=now()
+      deriving Show
     Event
-      ownerId Int
+      applicationId ApplicationId
+      organizerId Int
       name String
       description String Maybe default=''
       location String default=''
@@ -28,4 +34,15 @@ module Model where
       generatesNotifications Bool default=true
       createdAt UTCTime default=now()
       updatedAt UTCTime default=now()
+      deriving Show
   |]
+
+{- Constraints needed: -}
+{- Event -}
+  {- applicationId -}
+
+{- Indexes needed: -}
+{- Event -}
+  {- applicationId -}
+  {- (applicationId, organizerId) -}
+  {- endDate -}

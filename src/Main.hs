@@ -15,7 +15,7 @@ import Database.Persist.Postgresql
 import Database.Persist.TH
 
 import Data.ByteString.Char8 (pack)
-import Web.Scotty as S
+import qualified Web.Scotty as S
 
 import Config
 import Model
@@ -28,7 +28,10 @@ main = do
     flip runSqlPersistMPool pool $ runMigration migrateAll
 
   S.scotty 3000 $ do
-    S.get "/" $ html "Hello World!"
+    S.get "/" $ S.html "Hello World!"
+    S.get "/events" $ S.html "Here are all of your application's events"
+    S.get "/event/:eventId" $ S.html "Here's that application event you asked for"
+    S.get "/organizers/:organizerId/events" $ S.html "Here are all of the events created by this organizer"
 
 
 

@@ -20,11 +20,14 @@ executable EventCalendar
   -- other-modules:       
   -- other-extensions:    
   build-depends:       base >=4.7 && <4.8
+                       , aeson
+                       , data-default
+                       , mtl
                        , wai
                        , warp
                        , http-types
                        , resourcet
-                       , scotty
+                       , scotty ==0.9.*
                        , text
                        , bytestring
                        , blaze-html

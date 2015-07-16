@@ -8,18 +8,20 @@
 {-# LANGUAGE TemplateHaskell            #-}
 {-# LANGUAGE TypeFamilies               #-}
 
+{-# OPTIONS_GHC -fwarn-unused-matches -fwarn-unused-binds -fwarn-unused-imports #-}
+
 module Model where
   import Database.Persist()
   import Database.Persist.TH
   import Data.Time
 
   share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
-    Application
+    Application sql=applications
       name String
       createdAt UTCTime default=now()
       updatedAt UTCTime default=now()
       deriving Show
-    Event
+    Event sql=events
       applicationId ApplicationId
       organizerId Int
       name String

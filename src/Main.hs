@@ -1,11 +1,7 @@
 {-# LANGUAGE OverloadedStrings          #-}
-{-# LANGUAGE EmptyDataDecls             #-}
 {-# LANGUAGE FlexibleContexts           #-}
 {-# LANGUAGE GADTs                      #-}
-{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE MultiParamTypeClasses      #-}
-{-# LANGUAGE QuasiQuotes                #-}
-{-# LANGUAGE TemplateHaskell            #-}
 {-# LANGUAGE TypeFamilies               #-}
 
 import Control.Monad.IO.Class  (liftIO)
@@ -24,7 +20,7 @@ connPoolSize = 10
 
 main = do
   connStr <- postgresConnectionString
-  runStderrLoggingT $ withPostgresqlPool (pack connStr) connPoolSize $ \pool -> liftIO $ do
+  runStderrLoggingT $ withPostgresqlPool (pack connStr) connPoolSize $ \pool -> liftIO $
     flip runSqlPersistMPool pool $ runMigration migrateAll
 
   S.scotty 3000 $ do

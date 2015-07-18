@@ -28,10 +28,7 @@ module Model where
       startDate UTCTime
       endDate UTCTime
       timeZone String
-      private Bool
       cancelled Bool default=false
-      updateCount Int default=0
-      generatesNotifications Bool default=true
       createdAt UTCTime default=now()
       updatedAt UTCTime default=now()
       deriving Show
@@ -45,4 +42,5 @@ module Model where
 {- Event -}
   {- applicationId -}
   {- (applicationId, organizerId) -}
+  {- startDate -}
   {- endDate -}

@@ -19,7 +19,6 @@ executable EventCalendar
   main-is: Main.hs
   other-modules:  Config
                   , Model
-                  , ModelSerializer
 
   -- other-extensions:    
   build-depends:       base >=4.7 && <4.8

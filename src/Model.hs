@@ -1,12 +1,10 @@
-{-# LANGUAGE RankNTypes                 #-}
-{-# LANGUAGE FlexibleContexts           #-}
-{-# LANGUAGE GADTs                      #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE GADTs #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
-{-# LANGUAGE MultiParamTypeClasses      #-}
-{-# LANGUAGE OverloadedStrings          #-}
-{-# LANGUAGE QuasiQuotes                #-}
-{-# LANGUAGE TemplateHaskell            #-}
-{-# LANGUAGE TypeFamilies               #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE QuasiQuotes #-}
+{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TypeFamilies #-}
 
 {-# OPTIONS_GHC -fwarn-unused-matches -fwarn-unused-binds -fwarn-unused-imports #-}
 
@@ -16,12 +14,12 @@ module Model where
   import Data.Time
 
   share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
-    Application sql=applications
+    Application json sql=applications
       name String
       createdAt UTCTime default=now()
       updatedAt UTCTime default=now()
       deriving Show
-    Event sql=events
+    Event json sql=events
       applicationId ApplicationId
       organizerId Int
       name String

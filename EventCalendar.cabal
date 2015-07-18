@@ -23,6 +23,8 @@ executable EventCalendar
 
   -- other-extensions:    
   build-depends:       base >=4.7 && <4.8
+                       , mtl
+                       , data-default ==0.5.*
                        , wai
                        , aeson
                        , warp

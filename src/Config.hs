@@ -1,5 +1,4 @@
 module Config (postgresConnectionString) where
-
   import Control.Applicative
   import System.Environment (getEnv)
 

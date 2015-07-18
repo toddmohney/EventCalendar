@@ -1,45 +1,44 @@
-{-# LANGUAGE OverloadedStrings          #-}
 {-# LANGUAGE FlexibleContexts           #-}
 {-# LANGUAGE GADTs                      #-}
 {-# LANGUAGE MultiParamTypeClasses      #-}
+{-# LANGUAGE OverloadedStrings          #-}
 {-# LANGUAGE TypeFamilies               #-}
+{-# LANGUAGE ScopedTypeVariables        #-}
 
-{-# OPTIONS_GHC -fwarn-unused-matches -fwarn-unused-binds -fwarn-unused-imports #-}
+module Main where
+  import Control.Monad.IO.Class  (liftIO)
+  import Control.Monad.Logger    (runStderrLoggingT)
+  import Data.Monoid ((<>))
+  import qualified Data.Text.Lazy as T
 
-import Control.Monad.IO.Class  (liftIO)
-import Control.Monad.Logger    (runStderrLoggingT)
-import qualified Database.Persist.Postgresql as DB
-import Network.Wai.Middleware.RequestLogger (logStdoutDev)
+  import Database.Persist
+  import Database.Persist.Postgresql
+  import Database.Persist.TH
 
-import Data.ByteString.Char8 (pack)
-import qualified Web.Scotty as S
+  import qualified Web.Scotty as S
+  import Network.Wai.Middleware.RequestLogger(logStdoutDev)
 
-import Config
-import Model
-import ModelSerializer
+  import Model
+  import ModelSerializer
 
-connPoolSize :: Int
-connPoolSize = 4
+  connStr :: ConnectionString
+  connStr = "host=localhost dbname=event_calendar user=toddmohney port=5432"
 
-runDb = liftIO . dbFunction
+  main :: IO ()
+  main = S.scotty 3000 $ do
+          S.middleware logStdoutDev
+          inAppDb doMigrations
+          S.get "/" $ S.html "Hello World"
+          S.get "/posts" $ do
+              events :: [Entity Event] <- inHandlerDb $ selectList [] []
+              S.json events
 
-dbFunction :: DB.SqlPersistM () -> IO ()
-dbFunction query = do
-  connStr <- postgresConnectionString
-  runStderrLoggingT $
-    DB.withPostgresqlPool (pack connStr) connPoolSize $
-      \pool -> liftIO $ DB.runSqlPersistMPool query pool
+  inHandlerDb = liftIO . dbFunction
+  inAppDb     = liftIO . dbFunction
 
-{- getEventsA = do -}
-  {- events <- runDb (DB.selectList [] []) -}
-  {- S.json (events :: [DB.Entity Event]) -}
+  dbFunction query = runStderrLoggingT $
+          withPostgresqlPool connStr 10 $
+          \pool -> liftIO $ runSqlPersistMPool query pool
 
-main :: IO ()
-main = S.scotty 3000 $ do
-  S.middleware logStdoutDev
-  runDb $ DB.runMigration migrateAll
-  S.get "/" $ S.html "Hello World!"
-  S.get "/events" $ S.html "Hello World!"
-  S.get "/event/:eventId" $ S.html "Here's that application event you asked for"
-  S.get "/organizers/:organizerId/events" $ S.html "Here are all of the events created by this organizer"
+  doMigrations = runMigration migrateAll
 

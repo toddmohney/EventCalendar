@@ -15,7 +15,7 @@ import Network.Wai (Middleware)
 import Network.Wai.Middleware.RequestLogger (logStdout, logStdoutDev)
 import Web.Scotty.Trans (ActionT, Options, ScottyT, defaultHandler, delete,
   get, json, jsonData, middleware, notFound, param, post, put, scottyOptsT,
-  settings, showError, status)
+  setHeader, settings, showError, status)
 
 import Config
 import Model (Application, ApplicationId, Event, EventId, migrateAll)
@@ -70,11 +70,13 @@ defaultH e x = do
 
 getEventsA :: Action
 getEventsA = do
+  setHeader "Access-Control-Allow-Origin" "*"
   ts <- runDB (DB.selectList [] [])
   json (ts :: [DB.Entity Event])
 
 postEventsA :: Action
 postEventsA = do
+  setHeader "Access-Control-Allow-Origin" "*"
   t <- jsonData
   runDB (DB.insert_ t)
   status created201
@@ -82,6 +84,7 @@ postEventsA = do
 
 getEventA :: Action
 getEventA = do
+  setHeader "Access-Control-Allow-Origin" "*"
   i <- param "id"
   m <- runDB (DB.get (toKey i))
   case m of
@@ -90,6 +93,7 @@ getEventA = do
 
 putEventA :: Action
 putEventA = do
+  setHeader "Access-Control-Allow-Origin" "*"
   i <- param "id"
   t <- jsonData
   runDB (DB.repsert (toKey i) t)
@@ -97,6 +101,7 @@ putEventA = do
 
 deleteEventA :: Action
 deleteEventA = do
+  setHeader "Access-Control-Allow-Origin" "*"
   i <- param "id"
   runDB (DB.delete (toKey i :: EventId))
   json Null
